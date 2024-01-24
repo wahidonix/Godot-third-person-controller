@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://4btvv6obj7jc"]
+[gd_scene load_steps=8 format=3 uid="uid://4btvv6obj7jc"]
 
 [ext_resource type="PackedScene" uid="uid://c2u7rv6w76kmm" path="res://scenes/player.tscn" id="1_2apn6"]
 [ext_resource type="Material" uid="uid://bjm0a0yagmokv" path="res://materials/debugFloor.tres" id="1_4i4lb"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="3_wbmhf"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3D.gd" id="4_tvhdl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xye3n"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -25,11 +27,52 @@ environment = SubResource("Environment_afgyx")
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
 shadow_enabled = true
 
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
+[node name="Player" parent="." node_paths=PackedStringArray("pcam") instance=ExtResource("1_2apn6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+sens = 0.1
+pcam = NodePath("../ThirdPersonCamera")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 5)
+
+[node name="PhantomCameraHost" type="Node" parent="Camera3D"]
+script = ExtResource("3_wbmhf")
+
+[node name="ThirdPersonCamera" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 5)
+script = ExtResource("4_tvhdl")
+priority_override = false
+priority = 0
+follow_mode = 6
+follow_target = NodePath("../Player")
+follow_parameters/spring_arm/spring_length = 3.0
+follow_parameters/spring_arm/collision_mask = 1
+follow_parameters/spring_arm/shape = null
+follow_parameters/spring_arm/margin = 0.01
+follow_parameters/target_offset = Vector3(0, 1.5, 0)
+follow_parameters/damping = false
+look_at_mode = 0
+tween_parameters = null
+tween_on_load = false
+inactive_update_mode = 0
+camera_3D_resource = null
+
+[node name="Map" type="Node3D" parent="."]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Map"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 material_override = ExtResource("1_4i4lb")
 use_collision = true
-size = Vector3(50, 1, 50)
+size = Vector3(50, 1, 30)
 
-[node name="Player" parent="." instance=ExtResource("1_2apn6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+[node name="CSGBox3D3" type="CSGBox3D" parent="Map"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -60)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(50, 1, 30)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Map"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -30)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(8, 1, 30)
