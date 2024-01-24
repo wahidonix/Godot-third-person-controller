@@ -14,8 +14,15 @@ var isSprinting = false
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @onready var animation_player = $visuals/AnimationPlayer
-@onready var camera_rig = $CameraRig
 @onready var visuals = $visuals
+
+@export var pcam: PhantomCamera3D
+
+var min_yaw: float = -89.9
+var max_yaw: float = 50
+
+var min_pitch: float = 0
+var max_pitch: float = 360
 
 
 func _ready():
@@ -25,9 +32,14 @@ func _ready():
 
 func _input(event):
 	if event is InputEventMouseMotion:
+		var pcam_rotation_degrees: Vector3
+		pcam_rotation_degrees = pcam.get_third_person_rotation_degrees()
+		pcam_rotation_degrees.x -= event.relative.y * sens
+		pcam_rotation_degrees.x = clampf(pcam_rotation_degrees.x, min_yaw, max_yaw)
+		pcam_rotation_degrees.y -= event.relative.x * sens
+		pcam_rotation_degrees.y = wrapf(pcam_rotation_degrees.y, min_pitch, max_pitch)
+		pcam.set_third_person_rotation_degrees(pcam_rotation_degrees)
 		rotate_y(deg_to_rad(-event.relative.x * sens))
-		camera_rig.rotate_x(deg_to_rad(-event.relative.y * sens))
-		camera_rig.rotation.x = clamp(camera_rig.rotation.x, deg_to_rad(-90), deg_to_rad(45))
 
 func _physics_process(delta):
 	# Add the gravity.
