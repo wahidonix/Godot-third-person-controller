@@ -33,7 +33,7 @@ sens = 0.1
 pcam = NodePath("../ThirdPersonCamera")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 1.2, 3)
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D"]
 script = ExtResource("3_wbmhf")
@@ -50,6 +50,25 @@ follow_parameters/spring_arm/collision_mask = 1
 follow_parameters/spring_arm/shape = null
 follow_parameters/spring_arm/margin = 0.01
 follow_parameters/target_offset = Vector3(0, 1.5, 0)
+follow_parameters/damping = false
+look_at_mode = 0
+tween_parameters = null
+tween_on_load = false
+inactive_update_mode = 0
+camera_3D_resource = null
+
+[node name="ThirdPersonActionCamera" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 1.2, 3)
+script = ExtResource("4_tvhdl")
+priority_override = false
+priority = 0
+follow_mode = 6
+follow_target = NodePath("../Player")
+follow_parameters/spring_arm/spring_length = 1.0
+follow_parameters/spring_arm/collision_mask = 1
+follow_parameters/spring_arm/shape = null
+follow_parameters/spring_arm/margin = 0.01
+follow_parameters/target_offset = Vector3(0.25, 1.2, 0)
 follow_parameters/damping = false
 look_at_mode = 0
 tween_parameters = null

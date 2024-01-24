@@ -9,6 +9,7 @@ var isSprinting = false
 @export var JUMP_VELOCITY = 4.5
 @export_category("Camera variables")
 @export var sens = 0.5
+@export var pcam: PhantomCamera3D
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -16,7 +17,6 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var animation_player = $visuals/AnimationPlayer
 @onready var visuals = $visuals
 
-@export var pcam: PhantomCamera3D
 
 var min_yaw: float = -89.9
 var max_yaw: float = 50
@@ -39,7 +39,7 @@ func _input(event):
 		pcam_rotation_degrees.y -= event.relative.x * sens
 		pcam_rotation_degrees.y = wrapf(pcam_rotation_degrees.y, min_pitch, max_pitch)
 		pcam.set_third_person_rotation_degrees(pcam_rotation_degrees)
-		rotate_y(deg_to_rad(-event.relative.x * sens))
+		#rotate_y(deg_to_rad(-event.relative.x * sens))
 
 func _physics_process(delta):
 	# Add the gravity.
@@ -65,10 +65,15 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forwards", "move_backwards")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+		var move_dir: Vector3 = Vector3.ZERO
+		move_dir.x = direction.x
+		move_dir.z = direction.z
+
+		move_dir = move_dir.rotated(Vector3.UP, pcam.get_third_person_rotation().y).normalized()
+		velocity.x = move_dir.x * SPEED
+		velocity.z = move_dir.z * SPEED
 		
-		visuals.look_at(direction + position,Vector3.UP,true)
+		visuals.look_at(move_dir + position,Vector3.UP,true)
 		if isSprinting and is_on_floor():
 			animation_player.play("Sprint")
 		elif is_on_floor():
