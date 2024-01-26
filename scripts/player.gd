@@ -82,7 +82,7 @@ func _physics_process(delta):
 		velocity.x = move_dir.x * SPEED
 		velocity.z = move_dir.z * SPEED
 		
-		visuals.look_at(move_dir + position,Vector3.UP,true)
+		visuals.rotation.y = lerp_angle(visuals.rotation.y, atan2(move_dir.x, move_dir.z), delta * 9)
 		if isSprinting and is_on_floor():
 			animation_player.play("Sprint")
 		elif is_on_floor():
