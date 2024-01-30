@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://4btvv6obj7jc"]
+[gd_scene load_steps=12 format=3 uid="uid://4btvv6obj7jc"]
 
-[ext_resource type="PackedScene" uid="uid://c2u7rv6w76kmm" path="res://scenes/player.tscn" id="1_2apn6"]
+[ext_resource type="PackedScene" uid="uid://c2u7rv6w76kmm" path="res://player/player.tscn" id="1_2apn6"]
 [ext_resource type="Material" uid="uid://bjm0a0yagmokv" path="res://materials/debugFloor.tres" id="1_4i4lb"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="3_wbmhf"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_ewd3n"]
@@ -24,6 +24,12 @@ script = ExtResource("4_ewd3n")
 duration = 0.4
 transition = 0
 ease = 2
+
+[sub_resource type="Resource" id="Resource_1waj4"]
+script = ExtResource("4_ewd3n")
+duration = 1.0
+transition = 10
+ease = 1
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_hq0me"]
 height = 9.0
@@ -72,13 +78,15 @@ inactive_update_mode = 0
 camera_3D_resource = null
 
 [node name="PhantomCamera3D" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.826029, 0.563627, 0, -0.563627, 0.826029, 0, 6.99889, -42.9767)
+transform = Transform3D(-1, 1.52712e-08, -8.60786e-08, 0, 0.984625, 0.174682, 8.74228e-08, 0.174682, -0.984625, 0, 7.74825, -41.6743)
 script = ExtResource("4_tvhdl")
 priority_override = false
 priority = 0
 follow_mode = 0
-look_at_mode = 0
-tween_parameters = null
+look_at_mode = 2
+look_at_target = NodePath("../Player")
+look_at_parameters/look_at_target_offset = Vector3(0, 0, 0)
+tween_parameters = SubResource("Resource_1waj4")
 tween_on_load = true
 inactive_update_mode = 0
 camera_3D_resource = null

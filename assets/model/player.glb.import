@@ -10825,6 +10825,11 @@ _subresources={
 "slice_99/start_frame": 0,
 "slices/amount": 0
 }
+},
+"nodes": {
+"PATH:Armature/Skeleton3D": {
+"retarget/bone_map": Resource("res://Mixamo BoneMap.tres")
+}
 }
 }
 gltf/naming_version=1

@@ -1,0 +1,222 @@
+[gd_scene load_steps=12 format=3 uid="uid://4btvv6obj7jc"]
+
+[ext_resource type="PackedScene" uid="uid://c2u7rv6w76kmm" path="res://scenes/player.tscn" id="1_2apn6"]
+[ext_resource type="Material" uid="uid://bjm0a0yagmokv" path="res://materials/debugFloor.tres" id="1_4i4lb"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="3_wbmhf"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_ewd3n"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3D.gd" id="4_tvhdl"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xye3n"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_3b58v"]
+sky_material = SubResource("ProceduralSkyMaterial_xye3n")
+
+[sub_resource type="Environment" id="Environment_afgyx"]
+background_mode = 2
+sky = SubResource("Sky_3b58v")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="Resource" id="Resource_7qqcn"]
+script = ExtResource("4_ewd3n")
+duration = 0.4
+transition = 0
+ease = 2
+
+[sub_resource type="Resource" id="Resource_1waj4"]
+script = ExtResource("4_ewd3n")
+duration = 1.0
+transition = 10
+ease = 1
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_hq0me"]
+height = 9.0
+radius = 18.0
+
+[node name="World" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_afgyx")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Player" parent="." node_paths=PackedStringArray("thirdPersonCamera", "arenaCamera") instance=ExtResource("1_2apn6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+floor_constant_speed = true
+sprint_speed = 7
+sens = 0.1
+thirdPersonCamera = NodePath("../ThirdPersonCamera")
+arenaCamera = NodePath("../PhantomCamera3D")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-1, 1.52712e-08, -8.60786e-08, 0, 0.984625, 0.174682, 8.74228e-08, 0.174682, -0.984625, 0, 7.74825, -41.6743)
+
+[node name="PhantomCameraHost" type="Node" parent="Camera3D"]
+script = ExtResource("3_wbmhf")
+
+[node name="ThirdPersonCamera" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 5)
+script = ExtResource("4_tvhdl")
+priority_override = false
+priority = 1
+follow_mode = 6
+follow_target = NodePath("../Player")
+follow_parameters/spring_arm/spring_length = 3.0
+follow_parameters/spring_arm/collision_mask = 1
+follow_parameters/spring_arm/shape = null
+follow_parameters/spring_arm/margin = 0.01
+follow_parameters/target_offset = Vector3(0, 1.5, 0)
+follow_parameters/damping = false
+look_at_mode = 0
+tween_parameters = SubResource("Resource_7qqcn")
+tween_on_load = false
+inactive_update_mode = 0
+camera_3D_resource = null
+
+[node name="PhantomCamera3D" type="Node3D" parent="."]
+transform = Transform3D(-1, 1.52712e-08, -8.60786e-08, 0, 0.984625, 0.174682, 8.74228e-08, 0.174682, -0.984625, 0, 7.74825, -41.6743)
+script = ExtResource("4_tvhdl")
+priority_override = true
+priority = 0
+follow_mode = 0
+look_at_mode = 2
+look_at_target = NodePath("../Player")
+look_at_parameters/look_at_target_offset = Vector3(0, 0, 0)
+tween_parameters = SubResource("Resource_1waj4")
+tween_on_load = true
+inactive_update_mode = 0
+camera_3D_resource = null
+
+[node name="Map" type="Node3D" parent="."]
+
+[node name="floor" type="Node3D" parent="Map"]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Map/floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(50, 1, 30)
+
+[node name="CSGBox3D3" type="CSGCylinder3D" parent="Map/floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -62.0691)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+radius = 18.0
+height = 1.0
+sides = 64
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Map/floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -30)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(8, 1, 30)
+
+[node name="walls" type="Node3D" parent="Map"]
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="Map/walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1, -29.85)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(1, 2, 29.8)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="Map/walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.46397, 1, -29.8998)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(1, 2, 29.8)
+
+[node name="CSGBox3D6" type="CSGCylinder3D" parent="Map/walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -62.069)
+material_override = ExtResource("1_4i4lb")
+operation = 2
+use_collision = true
+radius = 18.0
+sides = 64
+
+[node name="CSGBox3D7" type="CSGCylinder3D" parent="Map/walls/CSGBox3D6"]
+material_override = ExtResource("1_4i4lb")
+operation = 2
+use_collision = true
+radius = 17.0
+sides = 64
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Map/walls/CSGBox3D6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.806091, 17.25)
+material_override = ExtResource("1_4i4lb")
+operation = 2
+use_collision = true
+size = Vector3(8, 3.61218, 1.7)
+
+[node name="CSGBox3D7" type="CSGBox3D" parent="Map/walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 1, 4.76837e-07)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(1, 2, 30)
+
+[node name="CSGBox3D8" type="CSGBox3D" parent="Map/walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 1, 4.76837e-07)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(1, 2, 30)
+
+[node name="CSGBox3D9" type="CSGBox3D" parent="Map/walls"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -9.53674e-07, 1, 14.5)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(1, 2, 48)
+
+[node name="CSGBox3D10" type="CSGBox3D" parent="Map/walls"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -9.53674e-07, 1, -14.5)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+size = Vector3(1, 2, 48)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Map/walls/CSGBox3D10"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.0499992, 0.806091, -5.64058e-07)
+material_override = ExtResource("1_4i4lb")
+operation = 2
+use_collision = true
+size = Vector3(8, 3.61218, 1.1)
+
+[node name="ramps" type="Node3D" parent="Map"]
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="Map/ramps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+polygon = PackedVector2Array(-5, 0, -5, 3, 1, 0, 1, 0)
+depth = 2.0
+
+[node name="CSGPolygon3D4" type="CSGPolygon3D" parent="Map/ramps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 4)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+polygon = PackedVector2Array(-5, 0, -5, 2, 1, 0, 1, 0)
+depth = 2.0
+
+[node name="CSGPolygon3D2" type="CSGPolygon3D" parent="Map/ramps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -4)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+polygon = PackedVector2Array(-5, 0, -5, 4, 1, 0, 1, 0)
+depth = 2.0
+
+[node name="CSGPolygon3D3" type="CSGPolygon3D" parent="Map/ramps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -8.1)
+material_override = ExtResource("1_4i4lb")
+use_collision = true
+polygon = PackedVector2Array(-5, 0, -5, 5, 1, 0, 1, 0)
+depth = 2.0
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -62.0691)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("CylinderShape3D_hq0me")
+
+[connection signal="body_entered" from="Area3D" to="Player" method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="Area3D" to="Player" method="_on_area_3d_body_exited"]
